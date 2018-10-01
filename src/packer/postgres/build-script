@@ -1,0 +1,24 @@
+{
+  "variables": {
+    "tag-version": ""
+  },
+
+  "builders":[
+    {
+      "type": "docker",
+      "image": "debian:jessie",
+      "commit": true
+    }
+  ],
+
+  "provisioners":[
+  ],
+
+  "post-processors": [
+    {
+      "type": "docker-tag",
+      "tag": "{{user `tag-version`}}",
+      "repository": "private/database"
+    }
+  ]
+}
