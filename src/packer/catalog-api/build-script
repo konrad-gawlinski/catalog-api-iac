@@ -34,7 +34,7 @@
     {
       "type": "file",
       "source": "./conf/supervisor/",
-      "destination": "/etc/supervisor/conf.d"
+      "destination": "/etc/supervisor/conf.d/"
     }
   ],
 

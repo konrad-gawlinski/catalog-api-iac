@@ -12,13 +12,22 @@
   ],
 
   "provisioners":[
+    {
+      "type": "shell",
+      "script": "./install.sh"
+    },
+    {
+      "type": "file",
+      "source": "./conf/",
+      "destination": "/etc/supervisor/conf.d"
+    }
   ],
 
   "post-processors": [
     {
       "type": "docker-tag",
       "tag": "{{user `tag-version`}}",
-      "repository": "private/database"
+      "repository": "private/postgres"
     }
   ]
 }
