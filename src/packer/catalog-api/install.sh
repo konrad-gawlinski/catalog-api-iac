@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 set -euxo pipefail
 
-mkdir -p /var/catalog-api/public
 mkdir -p /var/log/php
 
 apt-get update
@@ -15,4 +14,11 @@ apt-get update
 apt-get -y install supervisor nginx postgresql-client-10
 apt-get -y install php7.2 php7.2-fpm php7.2-xml php7.2-zip php7.2-pgsql
 
-apt-get purge -y --auto-remove wget
+apt-get install -y git
+#it should be able to clone any tag
+git clone --depth 1 https://github.com/konrad-gawlinski/catalog-api.git /var/catalog-api
+#the project directory should be stored directly in catalog-api/, project/ is not needed
+/var/catalog-api/project/bin/composer.phar --working-dir=/var/catalog-api/project install
+chown -R www-data:www-data /var/catalog-api
+
+apt-get purge -y --auto-remove wget git
