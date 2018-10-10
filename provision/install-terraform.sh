@@ -9,4 +9,5 @@ sudo unzip "/tmp/${FILE_NAME}" -d /usr/local/terraform
 sudo ln -s /usr/local/terraform/terraform /usr/bin/terraform
 rm -rf "/tmp/${FILE_NAME}"
 
-cd /iac/terraform && terraform init
+cd /iac/terraform/development/catalog-api-webapp && terraform init
+cd /iac/terraform/development/catalog-api-database && terraform init

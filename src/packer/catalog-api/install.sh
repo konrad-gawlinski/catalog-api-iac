@@ -17,8 +17,7 @@ apt-get -y install php7.2 php7.2-fpm php7.2-xml php7.2-zip php7.2-pgsql
 apt-get install -y git
 #it should be able to clone any tag
 git clone --depth 1 https://github.com/konrad-gawlinski/catalog-api.git /var/catalog-api
-#the project directory should be stored directly in catalog-api/, project/ is not needed
-/var/catalog-api/project/bin/composer.phar --working-dir=/var/catalog-api/project install
+/var/catalog-api/bin/composer.phar --working-dir=/var/catalog-api install
 chown -R www-data:www-data /var/catalog-api
 
 apt-get purge -y --auto-remove wget git

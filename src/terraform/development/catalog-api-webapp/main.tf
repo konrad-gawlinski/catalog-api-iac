@@ -9,8 +9,8 @@ resource "docker_network" "cs_network" {
 }
 
 resource "docker_container" "webapp_container" {
-  image = "private/catalog-api-webapp"
-  name  = "catalog-api-webapp_dev:01-${var.build-version}"
+  image = "private/catalog-api-webapp:${var.build-version}"
+  name  = "catalog-api-webapp_dev_01-${var.build-version}"
   hostname = "catalog-api-webapp_01-${var.build-version}.dev"
   ports {
     internal = "80"
@@ -19,4 +19,19 @@ resource "docker_container" "webapp_container" {
 
   networks = ["${docker_network.cs_network.id}"]
   command = ["supervisord", "-n"]
+
+  volumes {
+    host_path = "/var/catalog-api-webapp"
+    container_path = "/var/catalog-api"
+  }
+
+  provisioner "local-exec" {
+    command = "docker exec -t ${self.name} sh -c \"APP_ENV=development /var/catalog-api/tasks/robo --load-from /var/catalog-api/tasks/tools run:build-config\""
+  }
+
+  provisioner "local-exec" {
+    command = [
+      "docker exec -t ${self.name} sh -c 'echo \"CATALOG_SERVICE_DB_DSN=\\\"pgsql://webappuser-xyz:passwd@host:5432/catalog-api\\\"\" | tee /etc/environment"
+    ]
+  }
 }

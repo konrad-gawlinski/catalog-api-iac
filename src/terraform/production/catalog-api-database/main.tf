@@ -9,8 +9,9 @@ resource "docker_network" "cs_network" {
 }
 
 resource "docker_container" "database_container" {
-  image = "private/catalog-api-database"
-  name  = "catalog-api-database_dev:01-master-${var.build-version}"
+  image = "private/catalog-api-database:${var.build-version}"
+  name  = "catalog-api-database_prod_01-${var.build-version}"
+  hostname = "catalog-api-db_01-${var.build-version}.prod"
   ports {
     internal = "5432"
     external = "5432"

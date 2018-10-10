@@ -1,6 +1,6 @@
 {
   "variables": {
-    "tag-version": ""
+    "build-version": ""
   },
 
   "builders":[
@@ -26,8 +26,8 @@
   "post-processors": [
     {
       "type": "docker-tag",
-      "tag": "{{user `tag-version`}}",
-      "repository": "private/postgres"
+      "tag": "{{user `build-version`}}",
+      "repository": "private/catalog-api-database"
     }
   ]
 }
