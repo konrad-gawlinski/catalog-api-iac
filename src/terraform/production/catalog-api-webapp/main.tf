@@ -1,4 +1,5 @@
 variable "build-version" {}
+variable "environment" {}
 
 provider "docker" {
   host = "tcp://127.0.0.1:2375"
@@ -21,6 +22,6 @@ resource "docker_container" "webapp_container" {
   command = ["supervisord", "-n"]
 
   provisioner "local-exec" {
-    command = "docker exec -it ${self.name} sh -c \"APP_ENV=production /var/catalog-api/tasks/robo --load-from /var/catalog-api/tasks/tools run:build-config\""
+    command = "docker exec -it ${self.name} sh -c \"APP_ENV=${var.environment} /var/catalog-api/tasks/robo --load-from /var/catalog-api/tasks/tools run:build-config\""
   }
 }
