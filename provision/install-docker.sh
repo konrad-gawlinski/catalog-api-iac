@@ -16,3 +16,5 @@ sudo mkdir -p /etc/systemd/system/docker.service.d
 sudo cp /tmp/conf/docker/override.conf /etc/systemd/system/docker.service.d/
 sudo systemctl daemon-reload
 sudo systemctl restart docker
+
+docker network create -d bridge catalog-service-network
