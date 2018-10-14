@@ -20,4 +20,4 @@ git clone --depth 1 https://github.com/konrad-gawlinski/catalog-api.git /var/cat
 /var/catalog-api/bin/composer.phar --working-dir=/var/catalog-api install
 chown -R www-data:www-data /var/catalog-api
 
-apt-get purge -y --auto-remove wget git
+apt-get purge -y --auto-remove wget

@@ -23,7 +23,9 @@ TIMEOUT=10; while [[ $$TIMEOUT > 0 && `/usr/lib/postgresql/10/bin/pg_isready -d 
 echo "CREATE DATABASE catalog_api ENCODING '"'"'UTF-8'"'"' LC_COLLATE '"'"'C.UTF-8'"'"' LC_CTYPE '"'"'C.UTF-8'"'"' TEMPLATE template0;
 CREATE USER catalogapi_user WITH ENCRYPTED PASSWORD '"'"'123456'"'"';
 GRANT ALL PRIVILEGES ON DATABASE catalog_api TO catalogapi_user;"\
- | su -m postgres_admin -c "/usr/lib/postgresql/10/bin/psql postgres"'
+ | su -m postgres_admin -c "/usr/lib/postgresql/10/bin/psql postgres"\
+ && printf "host\tcatalog_api\tcatalogapi_user\t0.0.0.0/0\tpassword\n" | tee -a /var/pgsql_data/pg_hba.conf\
+ && su -m postgres_admin -c "/usr/lib/postgresql/10/bin/pg_ctl reload -D /var/pgsql_data"'
 INITDB
   }
 }

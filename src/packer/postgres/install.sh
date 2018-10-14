@@ -19,6 +19,7 @@ mkdir -p /var/log/postgres && chown postgres_admin:postgres_admin /var/log/postg
 chown -R postgres_admin:postgres_admin /var/run/postgresql
 sed -i '/en_US\.UTF-8 UTF-8/s/^#//' /etc/locale.gen && locale-gen
 su -m postgres_admin -c "/usr/lib/postgresql/10/bin/initdb --encoding=UTF-8 --locale=en_US.utf8 --lc-collate=C.UTF-8 --lc-ctype=C.UTF-8 -D /var/pgsql_data"
+sed -i "s/#listen_addresses = 'localhost'/listen_addresses = '*'/g" /var/pgsql_data/postgresql.conf
 printf "\nhost\tall\t\tpostgres_admin\tsamehost\t\tpassword\n" | tee -a /var/pgsql_data/pg_hba.conf
 
 apt-get purge -y --auto-remove wget
