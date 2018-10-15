@@ -12,7 +12,7 @@ echo "deb http://apt.postgresql.org/pub/repos/apt/ jessie-pgdg main" | tee -a /e
 
 apt-get update
 apt-get -y install supervisor nginx postgresql-client-10
-apt-get -y install php7.2 php7.2-fpm php7.2-xml php7.2-zip php7.2-pgsql
+apt-get -y install php7.2 php7.2-fpm php7.2-xml php7.2-zip php7.2-pgsql php7.2-curl
 
 apt-get install -y git
 #it should be able to clone any tag

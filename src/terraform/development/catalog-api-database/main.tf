@@ -1,4 +1,8 @@
 variable "build-version" {}
+variable "catalogapi_database" {}
+variable "catalogapi_dbschema" {}
+variable "catalogapi_dbuser" {}
+variable "catalogapi_dbpassword" {}
 
 provider "docker" {
   host = "tcp://127.0.0.1:2375"
@@ -17,15 +21,20 @@ resource "docker_container" "database_container" {
   command = ["supervisord", "-n"]
 
   provisioner "local-exec" {
-    command =<<INITDB
-docker exec -t ${self.name} /bin/bash -c '\
-TIMEOUT=10; while [[ $$TIMEOUT > 0 && `/usr/lib/postgresql/10/bin/pg_isready -d postgres` != 0 ]]; do sleep 1; ((--TIMEOUT)); done;\
-echo "CREATE DATABASE catalog_api ENCODING '"'"'UTF-8'"'"' LC_COLLATE '"'"'C.UTF-8'"'"' LC_CTYPE '"'"'C.UTF-8'"'"' TEMPLATE template0;
-CREATE USER catalogapi_user WITH ENCRYPTED PASSWORD '"'"'123456'"'"';
-GRANT ALL PRIVILEGES ON DATABASE catalog_api TO catalogapi_user;"\
- | su -m postgres_admin -c "/usr/lib/postgresql/10/bin/psql postgres"\
- && printf "host\tcatalog_api\tcatalogapi_user\t0.0.0.0/0\tpassword\n" | tee -a /var/pgsql_data/pg_hba.conf\
- && su -m postgres_admin -c "/usr/lib/postgresql/10/bin/pg_ctl reload -D /var/pgsql_data"'
-INITDB
+    command =<<ENV
+docker exec -t ${self.name} /bin/bash -c 'echo "\
+CATALOG_API_DATABASE=\"${var.catalogapi_database}\"
+CATALOG_API_DBSCHEMA=\"${var.catalogapi_dbschema}\"
+CATALOG_API_DBUSER=\"${var.catalogapi_dbuser}\"
+CATALOG_API_DBPASSWORD=\"${var.catalogapi_dbpassword}\"" | tee -a /tmp/db.env'
+ENV
+  }
+
+  provisioner "local-exec" {
+    command = "docker cp ./scripts/init_database ${self.name}:/tmp/"
+  }
+
+  provisioner "local-exec" {
+    command = "docker exec -t ${self.name} /bin/bash -c 'chmod ug+x /tmp/init_database && /tmp/init_database && rm /tmp/db.env && rm /tmp/init_database'"
   }
 }

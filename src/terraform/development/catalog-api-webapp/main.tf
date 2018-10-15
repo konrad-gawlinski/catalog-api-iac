@@ -1,5 +1,6 @@
 variable "build-version" {}
 variable "environment" {}
+variable "composer-install" {}
 
 provider "docker" {
   host = "tcp://127.0.0.1:2375"
@@ -22,10 +23,9 @@ resource "docker_container" "webapp_container" {
     container_path = "/var/catalog-api"
   }
 
-// developer needs to uncomment it only for environment setup
-//  provisioner "local-exec" {
-//    command = "docker exec -t ${self.name} sh -c \"/var/catalog-api/bin/composer.phar --working-dir=/var/catalog-api install && chown -R www-data:www-data /var/catalog-api\""
-//  }
+  provisioner "local-exec" {
+    command = "${var.composer-install == "yes" ? "docker exec -t ${self.name} sh -c \"/var/catalog-api/bin/composer.phar --working-dir=/var/catalog-api install && chown -R www-data:www-data /var/catalog-api\"" : ""}"
+  }
 
   provisioner "local-exec" {
       command = "docker exec -t ${self.name} sh -c \"APP_ENV=${var.environment} /var/catalog-api/tasks/robo --load-from /var/catalog-api/tasks/tools run:build-config\""
