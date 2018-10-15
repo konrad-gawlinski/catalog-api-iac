@@ -15,13 +15,16 @@ done
 if [[ $PG_ISDEAD -eq 0 ]]
 then
     echo "CREATE DATABASE ${CATALOG_API_DATABASE} ENCODING 'UTF-8' LC_COLLATE 'C.UTF-8' LC_CTYPE 'C.UTF-8' TEMPLATE template0;
-    CREATE USER ${CATALOG_API_DBUSER} WITH ENCRYPTED PASSWORD '${CATALOG_API_DBPASSWORD}';
-    GRANT ALL PRIVILEGES ON DATABASE ${CATALOG_API_DATABASE} TO ${CATALOG_API_DBUSER};" | tee /tmp/init_database.sql
-    su -m postgres_admin -c "/usr/lib/postgresql/10/bin/psql postgres < /tmp/init_database.sql"
-    rm /tmp/init_database.sql
+    CREATE USER ${CATALOG_API_DBUSER} WITH ENCRYPTED PASSWORD '${CATALOG_API_DBPASSWORD}';" | tee /tmp/init_database_01.sql
+    su -m postgres_admin -c "/usr/lib/postgresql/10/bin/psql postgres < /tmp/init_database_01.sql"
+    rm /tmp/init_database_01.sql
 
     printf "host\tcatalog_api\t${CATALOG_API_DBUSER}\t0.0.0.0/0\t\tpassword\n" | tee -a /var/pgsql_data/pg_hba.conf
-    echo "CREATE SCHEMA ${CATALOG_API_DBSCHEMA};" | su -m postgres_admin -c "/usr/lib/postgresql/10/bin/psql ${CATALOG_API_DATABASE}"\
+    echo "CREATE SCHEMA ${CATALOG_API_DBSCHEMA};
+    GRANT ALL PRIVILEGES ON DATABASE ${CATALOG_API_DATABASE} TO ${CATALOG_API_DBUSER};
+    GRANT ALL PRIVILEGES ON SCHEMA ${CATALOG_API_DBSCHEMA} TO ${CATALOG_API_DBUSER};" | tee /tmp/init_database_02.sql
+    su -m postgres_admin -c "/usr/lib/postgresql/10/bin/psql ${CATALOG_API_DATABASE} < /tmp/init_database_02.sql"
+    rm /tmp/init_database_02.sql
 
     su -m postgres_admin -c "/usr/lib/postgresql/10/bin/pg_ctl reload -D /var/pgsql_data"
 fi

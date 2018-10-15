@@ -18,10 +18,6 @@ resource "docker_container" "webapp_container" {
   command = ["supervisord", "-n"]
 
   provisioner "local-exec" {
-    command = "docker exec -t ${self.name} sh -c \"/var/catalog-api/bin/composer.phar --working-dir=/var/catalog-api install && chown -R www-data:www-data /var/catalog-api\""
-  }
-
-  provisioner "local-exec" {
     command = "docker exec -t ${self.name} sh -c \"APP_ENV=${var.environment} /var/catalog-api/tasks/robo --load-from /var/catalog-api/tasks/tools run:build-config\""
   }
 }

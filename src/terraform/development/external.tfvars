@@ -1,3 +1,5 @@
+catalogapi_dbhost = "catalog-api-database_dev_01-01"
+catalogapi_dbport = "5432"
 catalogapi_database = "catalog_api"
 catalogapi_dbschema = "catalog"
 catalogapi_dbuser = "catalogapi_user"
